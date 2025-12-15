@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام التداول الآلي المتقدم - Binance Spot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- شريط التنقل العلوي -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-robot"></i>
+                <span>Binance Trading Bot</span>
+            </div>
+            
+            <div class="nav-menu">
+                <a href="#home" class="nav-link active" data-page="home">
+                    <i class="fas fa-home"></i>
+                    <span>الرئيسية</span>
+                </a>
+                <a href="#inbox" class="nav-link" data-page="inbox">
+                    <i class="fas fa-inbox"></i>
+                    <span>التداول</span>
+                    <span class="badge" id="trades-badge">0</span>
+                </a>
+                <a href="#explore" class="nav-link" data-page="explore">
+                    <i class="fas fa-chart-line"></i>
+                    <span>التحليل</span>
+                </a>
+                <a href="#profile" class="nav-link" data-page="profile">
+                    <i class="fas fa-user-cog"></i>
+                    <span>الحساب</span>
+                </a>
+            </div>
+            
+            <div class="nav-status">
+                <div class="status-indicator" id="system-status"></div>
+                <span id="status-text">جاري التحميل...</span>
+                <div class="balance-display">
+                    <i class="fas fa-wallet"></i>
+                    <span id="current-balance">80.00 USDT</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="main-content">
+        <!-- الصفحة الرئيسية -->
+        <section id="home" class="page active">
+            <div class="container">
+                <div class="dashboard-header">
+                    <h1><i class="fas fa-chart-network"></i> لوحة التحكم الرئيسية</h1>
+                    <div class="system-controls">
+                        <button class="btn btn-power" id="main-power-btn">
+                            <i class="fas fa-power-off"></i>
+                            <span>تشغيل النظام</span>
+                        </button>
+                        <button class="btn btn-refresh" id="refresh-data">
+                            <i class="fas fa-sync-alt"></i>
+                            <span>تحديث البيانات</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- إحصائيات الأداء -->
+                <div class="stats-grid">
+                    <div class="stat-card success">
+                        <div class="stat-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>معدل النجاح</h3>
+                            <div class="stat-value" id="success-rate">0%</div>
+                            <div class="stat-target">الهدف: 90%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card primary">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>إجمالي الأرباح</h3>
+                            <div class="stat-value" id="total-profit">0 USDT</div>
+                            <div class="stat-target">اليوم: <span id="daily-profit">0 USDT</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card warning">
+                        <div class="stat-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>الصفقات النشطة</h3>
+                            <div class="stat-value" id="active-trades">0</div>
+                            <div class="stat-target">الحد: 5 صفقات</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card info">
+                        <div class="stat-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>مؤشر المخاطرة</h3>
+                            <div class="stat-value" id="risk-level">منخفض</div>
+                            <div class="stat-target">الحالة: <span id="risk-status">آمن</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- تحليل السوق -->
+                <div class="row">
+                    <div class="col-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-bullseye"></i> تحليل الفرص الحالية</h3>
+                                <div class="card-actions">
+                                    <span class="market-status">
+                                        <i class="fas fa-circle"></i>
+                                        <span>السوق: <span id="market-trend">متجه صعودي</span></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="opportunities-list" id="opportunities-container">
+                                    <!-- سيتم ملؤها بالجافاسكريبت -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-brain"></i> مؤشر الخوف والجشع</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="fear-greed-container">
+                                    <div class="fear-greed-meter">
+                                        <div class="meter-bar">
+                                            <div class="meter-fill" id="fear-greed-fill"></div>
+                                        </div>
+                                        <div class="meter-labels">
+                                            <span>خوف شديد</span>
+                                            <span>جشع شديد</span>
+                                        </div>
+                                    </div>
+                                    <div class="fear-greed-value">
+                                        <span id="fear-greed-score">0</span>
+                                        <span class="fg-label">مؤشر الخوف والجشع</span>
+                                    </div>
+                                    <div class="fg-recommendation">
+                                        <i class="fas fa-lightbulb"></i>
+                                        <span id="fg-advice">جارٍ التحليل...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- رسائل النظام -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-comments"></i> رسائل النظام والتوصيات</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="messages-container" id="system-messages">
+                            <div class="message-item">
+                                <div class="message-icon">
+                                    <i class="fas fa-info-circle"></i>
+                                </div>
+                                <div class="message-content">
+                                    <p>مرحباً بك في نظام التداول الآلي المتقدم. النظام قيد التهيئة وجاهز للتداول.</p>
+                                    <small>منذ 1 دقيقة</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="strategy-tips">
+                            <h4><i class="fas fa-graduation-cap"></i> نصائح وتحسينات الاستراتيجية</h4>
+                            <div class="tips-list" id="strategy-tips">
+                                <!-- سيتم ملؤها بالجافاسكريبت -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- صفحة التداول -->
+        <section id="inbox" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h1><i class="fas fa-trade-federation"></i> لوحة التداول المتقدمة</h1>
+                    <div class="wallet-info">
+                        <div class="wallet-card">
+                            <i class="fas fa-coins"></i>
+                            <div class="wallet-details">
+                                <span class="wallet-label">الرصيد المتوفر</span>
+                                <span class="wallet-amount" id="trading-balance">80.00 USDT</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- أوضاع التداول -->
+                <div class="trading-modes">
+                    <div class="mode-card auto-trading">
+                        <div class="mode-header">
+                            <i class="fas fa-robot"></i>
+                            <h3>التداول التلقائي</h3>
+                            <div class="mode-switch">
+                                <label class="switch">
+                                    <input type="checkbox" id="auto-trading-toggle">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="mode-body">
+                            <p>التداول الآلي على أفضل 3 عملات حسب السيولة في 24 ساعة</p>
+                            <div class="mode-settings">
+                                <div class="setting-item">
+                                    <label>حجم الصفقة:</label>
+                                    <select id="auto-trade-size" class="form-control">
+                                        <option value="5">5 USDT</option>
+                                        <option value="10" selected>10 USDT</option>
+                                        <option value="15">15 USDT</option>
+                                        <option value="20">20 USDT</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-start-auto" id="start-auto-trading">
+                                    <i class="fas fa-play"></i>
+                                    بدء التداول الآلي
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mode-card manual-trading">
+                        <div class="mode-header">
+                            <i class="fas fa-hand-paper"></i>
+                            <h3>التداول اليدوي</h3>
+                        </div>
+                        <div class="mode-body">
+                            <p>اختر من أفضل العملات للتداول اليدوي</p>
+                            <div class="manual-controls">
+                                <div class="form-group">
+                                    <label>اختر العملة:</label>
+                                    <select id="manual-coin-select" class="form-control">
+                                        <option value="">-- اختر العملة --</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>مبلغ التداول (USDT):</label>
+                                    <input type="number" id="manual-trade-amount" 
+                                           class="form-control" value="10" min="1" max="80">
+                                </div>
+                                <div class="trade-actions">
+                                    <button class="btn btn-buy" id="manual-buy-btn">
+                                        <i class="fas fa-arrow-up"></i>
+                                        شراء
+                                    </button>
+                                    <button class="btn btn-sell" id="manual-sell-btn">
+                                        <i class="fas fa-arrow-down"></i>
+                                        بيع
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الصفقات النشطة -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-spinner"></i> الصفقات النشطة</h3>
+                        <span class="badge" id="active-trades-count">0</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="trades-table-container">
+                            <table class="trades-table">
+                                <thead>
+                                    <tr>
+                                        <th>العملة</th>
+                                        <th>نوع الصفقة</th>
+                                        <th>سعر الدخول</th>
+                                        <th>الكمية</th>
+                                        <th>وقف الخسارة</th>
+                                        <th>جني الأرباح</th>
+                                        <th>الربح الحالي</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="active-trades-table">
+                                    <!-- سيتم ملؤها بالجافاسكريبت -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الصفقات المكتملة -->
+                <div class="row">
+                    <div class="col-6">
+                        <div class="card">
+                            <div class="card-header success-header">
+                                <h3><i class="fas fa-check-circle"></i> الصفقات الناجحة</h3>
+                                <span class="badge success" id="successful-trades-count">0</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="trades-list" id="successful-trades-list">
+                                    <!-- سيتم ملؤها بالجافاسكريبت -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-6">
+                        <div class="card">
+                            <div class="card-header danger-header">
+                                <h3><i class="fas fa-times-circle"></i> الصفقات الخاسرة</h3>
+                                <span class="badge danger" id="failed-trades-count">0</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="trades-list" id="failed-trades-list">
+                                    <!-- سيتم ملؤها بالجافاسكريبت -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- صفحة التحليل -->
+        <section id="explore" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h1><i class="fas fa-search-dollar"></i> مركز التحليل المتقدم</h1>
+                    <div class="analysis-tools">
+                        <button class="btn btn-refresh" id="refresh-analysis">
+                            <i class="fas fa-redo"></i>
+                            تحديث التحليل
+                        </button>
+                    </div>
+                </div>
+
+                <!-- أفضل 3 عملات بالسيولة -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-crown"></i> أفضل 3 عملات بالسيولة (24 ساعة)</h3>
+                        <div class="time-filter">
+                            <span>آخر تحديث: <span id="last-update-time">--:--</span></span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="top-coins-grid" id="top-coins-container">
+                            <!-- سيتم ملؤها بالجافاسكريبت -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- العملات للانفجار القريب -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-rocket"></i> العملات للانفجار القريب</h3>
+                        <div class="filter-controls">
+                            <select id="breakout-filter" class="form-control">
+                                <option value="all">جميع العملات</option>
+                                <option value="high">إشارة عالية فقط</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="breakout-analysis" id="breakout-analysis">
+                            <!-- سيتم ملؤها بالجافاسكريبت -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- قوائم الرابحين والخاسرين -->
+                <div class="row">
+                    <div class="col-6">
+                        <div class="card">
+                            <div class="card-header success-header">
+                                <h3><i class="fas fa-arrow-up"></i> أعلى 10 رابحين</h3>
+                            </div>
+                            <div class="card-body">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>العملة</th>
+                                            <th>التغير %</th>
+                                            <th>الحجم</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="gainers-table">
+                                        <!-- سيتم ملؤها بالجافاسكريبت -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-6">
+                        <div class="card">
+                            <div class="card-header danger-header">
+                                <h3><i class="fas fa-arrow-down"></i> أسوأ 10 خاسرين</h3>
+                            </div>
+                            <div class="card-body">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>العملة</th>
+                                            <th>التغير %</th>
+                                            <th>الحجم</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="losers-table">
+                                        <!-- سيتم ملؤها بالجافاسكريبت -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- صفحة الحساب -->
+        <section id="profile" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h1><i class="fas fa-user-shield"></i> إدارة الحساب والإعدادات</h1>
+                </div>
+
+                <!-- إعدادات API -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-key"></i> إعدادات Binance API</h3>
+                        <div class="connection-status">
+                            <span class="status-dot" id="api-status-dot"></span>
+                            <span id="api-status-text">غير متصل</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="api-form">
+                            <div class="form-group">
+                                <label for="api-key">
+                                    <i class="fas fa-key"></i> مفتاح API
+                                </label>
+                                <input type="password" id="api-key" 
+                                       class="form-control" 
+                                       placeholder="أدخل مفتاح API الخاص بك">
+                                <small class="form-text">سيتم تخزين المفتاح محلياً فقط</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="api-secret">
+                                    <i class="fas fa-lock"></i> السر السري API
+                                </label>
+                                <input type="password" id="api-secret" 
+                                       class="form-control" 
+                                       placeholder="أدخل السر السري الخاص بك">
+                                <small class="form-text">لن يتم إرسال هذا المفتاح لأي مكان</small>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button class="btn btn-primary" id="save-api-keys">
+                                    <i class="fas fa-save"></i>
+                                    حفظ الإعدادات
+                                </button>
+                                <button class="btn btn-test" id="test-api-connection">
+                                    <i class="fas fa-plug"></i>
+                                    اختبار الاتصال
+                                </button>
+                                <button class="btn btn-danger" id="clear-api-keys">
+                                    <i class="fas fa-trash"></i>
+                                    مسح المفاتيح
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- إعدادات الحماية -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-shield-alt"></i> إعدادات الحماية</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="security-settings">
+                            <div class="security-item">
+                                <div class="security-info">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <div>
+                                        <h4>الحد اليومي للخسارة</h4>
+                                        <p>أقصى خسارة يومية مسموح بها</p>
+                                    </div>
+                                </div>
+                                <div class="security-control">
+                                    <input type="range" id="daily-loss-limit" 
+                                           min="1" max="20" value="10" class="slider">
+                                    <span class="slider-value" id="loss-limit-value">10%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="security-item">
+                                <div class="security-info">
+                                    <i class="fas fa-hand-holding-usd"></i>
+                                    <div>
+                                        <h4>حجم الصفقة الأقصى</h4>
+                                        <p>النسبة القصوى من الرصيد للصفقة الواحدة</p>
+                                    </div>
+                                </div>
+                                <div class="security-control">
+                                    <input type="range" id="max-trade-size" 
+                                           min="1" max="50" value="10" class="slider">
+                                    <span class="slider-value" id="trade-size-value">10%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="security-item">
+                                <div class="security-info">
+                                    <i class="fas fa-exchange-alt"></i>
+                                    <div>
+                                        <h4>الحد الأقصى للصفقات النشطة</h4>
+                                        <p>أقصى عدد للصفقات المتزامنة</p>
+                                    </div>
+                                </div>
+                                <div class="security-control">
+                                    <input type="number" id="max-active-trades" 
+                                           class="form-control" min="1" max="10" value="5">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- زر التشغيل الرئيسي -->
+                <div class="power-section">
+                    <div class="power-card">
+                        <div class="power-icon">
+                            <i class="fas fa-power-off"></i>
+                        </div>
+                        <div class="power-info">
+                            <h3>التحكم بالنظام</h3>
+                            <p>تشغيل/إيقاف نظام التداول الآلي بالكامل</p>
+                        </div>
+                        <div class="power-switch">
+                            <label class="switch large">
+                                <input type="checkbox" id="system-power-toggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="power-stats">
+                        <div class="stat">
+                            <span class="stat-label">وقت التشغيل</span>
+                            <span class="stat-value" id="uptime">00:00:00</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">آخر تشغيل</span>
+                            <span class="stat-value" id="last-start">--:--</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">حالة النظام</span>
+                            <span class="stat-value" id="system-state">متوقف</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- نافذة تفاصيل الصفقة -->
+    <div id="trade-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-chart-line"></i> تفاصيل الصفقة</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body" id="trade-details">
+                <!-- سيتم ملؤها بالجافاسكريبت -->
+            </div>
+        </div>
+    </div>
+
+    <!-- إشعارات -->
+    <div id="notification-container"></div>
+
+    <!-- الروابط الخارجية -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
