@@ -1,9 +1,4 @@
-/* Reset وتنسيقات عامة */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+/* ============ التصميم الرئيسي للتطبيق ============ */
 
 :root {
     --primary-color: #3498db;
@@ -19,9 +14,15 @@
     --dark-light: #34495e;
     --light-color: #ecf0f1;
     --gray-color: #95a5a6;
-    --border-radius: 10px;
-    --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    --border-radius: 12px;
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
@@ -33,7 +34,7 @@ body {
     overflow-x: hidden;
 }
 
-/* شريط التنقل */
+/* ============ شريط التنقل ============ */
 .navbar {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
@@ -93,7 +94,7 @@ body {
     transform: translateY(-2px);
 }
 
-.nav-link .badge {
+.badge {
     position: absolute;
     top: -5px;
     left: -5px;
@@ -137,11 +138,7 @@ body {
     font-weight: 600;
 }
 
-.balance-display i {
-    font-size: 1.2rem;
-}
-
-/* المحتوى الرئيسي */
+/* ============ المحتوى الرئيسي ============ */
 .main-content {
     padding-top: 80px;
     min-height: calc(100vh - 80px);
@@ -167,7 +164,7 @@ body {
     padding: 20px;
 }
 
-/* البطاقات */
+/* ============ البطاقات ============ */
 .card {
     background: white;
     border-radius: var(--border-radius);
@@ -198,19 +195,11 @@ body {
     color: var(--dark-color);
 }
 
-.card-header.success-header {
-    border-bottom: 3px solid var(--secondary-color);
-}
-
-.card-header.danger-header {
-    border-bottom: 3px solid var(--danger-color);
-}
-
 .card-body {
     padding: 25px;
 }
 
-/* الأزرار */
+/* ============ الأزرار ============ */
 .btn {
     padding: 12px 25px;
     border: none;
@@ -249,19 +238,24 @@ body {
     color: white;
 }
 
+.btn-secondary {
+    background: linear-gradient(135deg, var(--gray-color), #7f8c8d);
+    color: white;
+}
+
 .btn-power {
-    background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+    background: linear-gradient(135deg, #6b7280, #4b5563);
     color: white;
     font-size: 1.1rem;
     padding: 15px 30px;
 }
 
-.btn-refresh {
-    background: linear-gradient(135deg, var(--info-color), #16a085);
-    color: white;
+.btn-power:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
-/* إحصائيات الأداء */
+/* ============ إحصائيات الأداء ============ */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -321,7 +315,7 @@ body {
     color: var(--gray-color);
 }
 
-/* نظام التبديل */
+/* ============ نظام التبديل ============ */
 .switch {
     position: relative;
     display: inline-block;
@@ -383,7 +377,7 @@ input:checked + .slider:before {
     transform: translateX(-36px);
 }
 
-/* أوضاع التداول */
+/* ============ أوضاع التداول ============ */
 .trading-modes {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -417,58 +411,133 @@ input:checked + .slider:before {
     padding: 25px;
 }
 
-/* الجداول */
-.trades-table {
-    width: 100%;
-    border-collapse: collapse;
+/* ============ معلومات التداول في الوقت الحقيقي ============ */
+.real-time-trade-info {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 15px 0;
+    border: 2px solid #e9ecef;
 }
 
-.trades-table th {
-    background: linear-gradient(135deg, var(--light-color), white);
-    padding: 15px;
-    text-align: right;
-    border-bottom: 2px solid #eee;
-    color: var(--dark-color);
+.real-time-trade-info .trade-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+}
+
+.real-time-trade-info .detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+}
+
+.real-time-trade-info .detail-label {
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.real-time-trade-info .detail-value {
+    color: #212529;
     font-weight: 600;
 }
 
-.trades-table td {
+.real-time-trade-info .detail-value.price {
+    color: #28a745;
+}
+
+.real-time-trade-info .detail-value.entry {
+    color: #007bff;
+}
+
+.real-time-trade-info .detail-value.stop-loss {
+    color: #dc3545;
+}
+
+.real-time-trade-info .detail-value.take-profit {
+    color: #20c997;
+}
+
+/* ============ العملات للانفجار ============ */
+.breakout-analysis {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.breakout-item {
+    background: white;
+    border-radius: 10px;
     padding: 15px;
-    border-bottom: 1px solid #eee;
+    border: 2px solid #e9ecef;
+    transition: var(--transition);
 }
 
-.trades-table tr:hover {
-    background-color: rgba(52, 152, 219, 0.1);
+.breakout-item:hover {
+    border-color: var(--secondary-color);
+    transform: translateY(-2px);
 }
 
-.data-table {
-    width: 100%;
-    border-collapse: collapse;
+.breakout-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
 }
 
-.data-table th,
-.data-table td {
-    padding: 12px 15px;
-    text-align: right;
-    border-bottom: 1px solid #eee;
-}
-
-.data-table th {
-    background: linear-gradient(135deg, var(--light-color), white);
+.breakout-header h5 {
+    margin: 0;
     color: var(--dark-color);
+}
+
+.breakout-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.metric {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.metric-label {
+    color: #6c757d;
+}
+
+.metric-value {
     font-weight: 600;
 }
 
-/* النماذج */
+.metric-value.high {
+    color: #28a745;
+}
+
+.metric-value.medium {
+    color: #fd7e14;
+}
+
+.metric-value.low {
+    color: #6c757d;
+}
+
+/* ============ التداول اليدوي ============ */
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .form-control {
     width: 100%;
     padding: 12px 15px;
-    border: 2px solid #ddd;
-    border-radius: var(--border-radius);
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
     font-size: 1rem;
     transition: var(--transition);
 }
@@ -479,7 +548,7 @@ input:checked + .slider:before {
     box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
 }
 
-/* مؤشر الخوف والجشع */
+/* ============ مؤشر الخوف والجشع ============ */
 .fear-greed-container {
     text-align: center;
 }
@@ -501,8 +570,6 @@ input:checked + .slider:before {
     top: 0;
     right: 0;
     bottom: 0;
-    width: 50%;
-    background: rgba(255, 255, 255, 0.3);
     border-radius: 15px;
 }
 
@@ -537,112 +604,7 @@ input:checked + .slider:before {
     gap: 10px;
 }
 
-/* العملات الأعلى */
-.top-coins-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-}
-
-.coin-card {
-    background: linear-gradient(135deg, white, var(--light-color));
-    border-radius: var(--border-radius);
-    padding: 20px;
-    border: 2px solid #eee;
-    transition: var(--transition);
-}
-
-.coin-card:hover {
-    border-color: var(--primary-color);
-    transform: translateY(-5px);
-}
-
-/* المودال */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background: rgba(0, 0, 0, 0.7);
-    z-index: 2000;
-    animation: fadeIn 0.3s ease;
-}
-
-.modal.active {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-content {
-    background: white;
-    border-radius: var(--border-radius);
-    width: 90%;
-    max-width: 600px;
-    max-height: 90vh;
-    overflow-y: auto;
-    animation: slideUp 0.3s ease;
-}
-
-@keyframes slideUp {
-    from {
-        transform: translateY(50px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-.modal-header {
-    padding: 20px;
-    border-bottom: 2px solid #eee;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.close-modal {
-    background: none;
-    border: none;
-    font-size: 2rem;
-    cursor: pointer;
-    color: var(--gray-color);
-}
-
-.modal-body {
-    padding: 25px;
-}
-
-/* نظام الصفوف والأعمدة */
-.row {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0 -15px;
-}
-
-.col-6 {
-    flex: 0 0 50%;
-    max-width: 50%;
-    padding: 0 15px;
-}
-
-.col-8 {
-    flex: 0 0 66.666%;
-    max-width: 66.666%;
-    padding: 0 15px;
-}
-
-.col-4 {
-    flex: 0 0 33.333%;
-    max-width: 33.333%;
-    padding: 0 15px;
-}
-
-/* التجاوب */
+/* ============ التجاوب ============ */
 @media (max-width: 1200px) {
     .col-6,
     .col-8,
@@ -690,7 +652,7 @@ input:checked + .slider:before {
     }
 }
 
-/* أنماط إضافية */
+/* ============ ألوان وأشكال إضافية ============ */
 .profit-positive {
     color: var(--secondary-color);
     font-weight: 600;
@@ -716,7 +678,7 @@ input:checked + .slider:before {
     100% { transform: rotate(360deg); }
 }
 
-/* رسائل النظام */
+/* ============ رسائل النظام ============ */
 .messages-container {
     max-height: 300px;
     overflow-y: auto;
@@ -750,119 +712,76 @@ input:checked + .slider:before {
     color: var(--gray-color);
 }
 
-/* التحكم في الطاقة */
-.power-section {
-    background: linear-gradient(135deg, white, var(--light-color));
-    border-radius: var(--border-radius);
-    padding: 30px;
-    margin-top: 30px;
-}
-
-.power-card {
+/* ============ نظام الصفوف والأعمدة ============ */
+.row {
     display: flex;
-    align-items: center;
-    gap: 25px;
-    margin-bottom: 25px;
+    flex-wrap: wrap;
+    margin: 0 -15px;
 }
 
-.power-icon {
-    font-size: 3rem;
-    color: var(--primary-color);
+.col-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+    padding: 0 15px;
 }
 
-.power-info {
-    flex: 1;
+.col-8 {
+    flex: 0 0 66.666%;
+    max-width: 66.666%;
+    padding: 0 15px;
 }
 
-.power-info h3 {
-    margin-bottom: 10px;
-    color: var(--dark-color);
+.col-4 {
+    flex: 0 0 33.333%;
+    max-width: 33.333%;
+    padding: 0 15px;
 }
 
-.power-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    padding-top: 20px;
-    border-top: 2px solid #eee;
-}
-
-.stat {
-    text-align: center;
-    padding: 15px;
-    background: white;
+/* ============ نصائح الاستراتيجية ============ */
+.strategy-tips {
+    margin-top: 20px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8f9fa, white);
     border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
+    border: 2px solid #e9ecef;
 }
 
-.stat-label {
-    display: block;
-    color: var(--gray-color);
-    margin-bottom: 5px;
-    font-size: 0.9rem;
-}
-
-.stat-value {
-    display: block;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--dark-color);
-}
-
-/* إعدادات الأمان */
-.security-settings {
+.tips-list {
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 10px;
+    margin-top: 15px;
 }
 
-.security-item {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 20px;
-    background: linear-gradient(135deg, white, var(--light-color));
-    border-radius: var(--border-radius);
-    border: 2px solid #eee;
-}
-
-.security-info {
-    flex: 1;
+.tip-item {
     display: flex;
     align-items: center;
     gap: 15px;
+    padding: 12px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    transition: var(--transition);
 }
 
-.security-info i {
-    font-size: 1.5rem;
-    color: var(--primary-color);
+.tip-item:hover {
+    border-color: var(--primary-color);
+    transform: translateX(-5px);
 }
 
-.security-control {
-    min-width: 200px;
-}
-
-.slider {
-    width: 100%;
-    height: 25px;
-    background: #ddd;
-    border-radius: 15px;
-    outline: none;
-    -webkit-appearance: none;
-}
-
-.slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 35px;
-    height: 35px;
+.tip-number {
+    width: 30px;
+    height: 30px;
     background: var(--primary-color);
+    color: white;
     border-radius: 50%;
-    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
 }
 
-.slider-value {
-    display: inline-block;
-    margin-right: 15px;
-    font-weight: 600;
+.tip-content {
+    flex: 1;
     color: var(--dark-color);
-}
+    }
