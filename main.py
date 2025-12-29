@@ -1,4 +1,4 @@
-import os
+ os
 from flask import Flask
 import threading
 from binance.client import Client
@@ -45,4 +45,4 @@ if __name__ == '__main__':
     
     # تشغيل خادم Flask على المنفذ المطلوب
     port = int(os.environ.get('PORT', 10000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port
