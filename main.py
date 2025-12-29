@@ -26,23 +26,19 @@ def run_bot():
         print("✅ Connected to Binance API")
         
         while True:
-            # كود التداول الخاص بك هنا
             try:
-                # مثال: الحصول على سعر Bitcoin
                 ticker = client.get_symbol_ticker(symbol='BTCUSDT')
                 print(f"BTC Price: {ticker['price']}")
             except Exception as e:
                 print(f"Error: {e}")
             
-            time.sleep(60)  # انتظر دقيقة
+            time.sleep(60)
     else:
         print("❌ API keys not found!")
 
 if __name__ == '__main__':
-    # بدء البوت في thread منفصل
     bot_thread = threading.Thread(target=run_bot, daemon=True)
     bot_thread.start()
     
-    # تشغيل خادم Flask على المنفذ المطلوب
     port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port)
