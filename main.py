@@ -1,7 +1,6 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
 import os
 from binance.client import Client
-from binance.enums import *
 from datetime import datetime
 import pandas as pd
 import ta
