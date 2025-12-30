@@ -1,64 +1,61 @@
- os
-import time
-from flask import Flask
-from binance.client import Client
-import threading
+from flask import Flask, jsonify
+import os
+import sys
 
 app = Flask(__name__)
 
+# قائمة المسارات المعروفة
+ENDPOINTS = {
+    "/": "Home page",
+    "/health": "Health check",
+    "/test": "Test endpoint",
+    "/env": "Environment info (safe)"
+}
+
 @app.route('/')
 def home():
-    return "🚀 Trading Bot is Running! ✅"
+    return jsonify({
+        'service': 'Crypto Auto Trader',
+        'status': 'active',
+        'endpoints': ENDPOINTS,
+        'environment': os.environ.get('NODE_ENV', 'production')
+    })
 
 @app.route('/health')
-def health_check():
-    return "OK", 200
+def health():
+    return jsonify({
+        'status': 'healthy',
+        'python_version': sys.version,
+        'flask_version': '2.3.3'
+    })
 
-def run_bot():
-    """دالة تشغيل البوت"""
-    # الحصول على مفاتيح API من Environment Variables
-    api_key = os.environ.get('BINANCE_API_KEY')
-    api_secret = os.environ.get('BINANCE_SECRET_KEY')
-    
-    print(f"🔍 Checking API Key: {'✅ Found' if api_key else '❌ Missing'}")
-    print(f"🔍 Checking Secret Key: {'✅ Found' if api_secret else '❌ Missing'}")
-    
-    if not api_key or not api_secret:
-        print("❌ ERROR: API keys missing! Please add them in Render Environment Variables")
-        print("❌ Required: BINANCE_API_KEY and BINANCE_SECRET_KEY")
-        return
-    
-    try:
-        # الاتصال بـ Binance Testnet
-        client = Client(api_key, api_secret, testnet=True)
-        print("✅ Successfully connected to Binance Testnet")
-        
-        # اختبار الاتصال
-        account = client.get_account()
-        print(f"✅ Account Status: Active (Testnet)")
-        
-        while True:
-            try:
-                # الحصول على سعر البيتكوين
-                ticker = client.get_symbol_ticker(symbol='BTCUSDT')
-                price = float(ticker['price'])
-                print(f"💰 BTC Price: ${price:,.2f}")
-                
-            except Exception as e:
-                print(f"⚠️ Temporary error: {e}")
-            
-            time.sleep(30)  # انتظر 30 ثانية
-            
-    except Exception as e:
-        print(f"❌ Failed to connect: {e}")
-        print("❌ Check: 1) API keys 2) Internet 3) Binance service")
+@app.route('/test')
+def test():
+    return jsonify({'test': 'success', 'code': 200})
+
+@app.route('/env')
+def env():
+    # عرض متغيرات البيئة بأمان (بدون عرض المفاتيح السرية)
+    safe_env = {
+        'NODE_ENV': os.environ.get('NODE_ENV'),
+        'PORT': os.environ.get('PORT'),
+        'has_binance_key': 'BINANCE_API_KEY' in os.environ,
+        'has_binance_secret': 'BINANCE_SECRET_KEY' in os.environ,
+        'total_env_vars': len(os.environ)
+    }
+    return jsonify(safe_env)
+
+@app.errorhandler(404)
+def not_found(e):
+    return jsonify({
+        'error': 'Not Found',
+        'available_endpoints': list(ENDPOINTS.keys()),
+        'message': 'Use one of the available endpoints'
+    }), 404
 
 if __name__ == '__main__':
-    # بدء البوت في thread منفصل
-    bot_thread = threading.Thread(target=run_bot, daemon=True)
-    bot_thread.start()
-    
-    # تشغيل خادم Flask
     port = int(os.environ.get('PORT', 10000))
-    print(f"🌐 Server starting on port {port}")
-    app.run(host='0.0.0.0', port=port, debug=False
+    print(f"🚀 Starting server on port {port}")
+    print(f"📁 Python: {sys.version}")
+    print(f"🔑 Environment variables: {len(os.environ)}")
+    app.run(host='0.0.0.0', port=port, debug=False)
